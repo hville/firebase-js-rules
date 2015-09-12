@@ -1,0 +1,28 @@
+{
+  "name": "firebase-rules",
+  "version": "0.0.1",
+  "description": "TODO",
+  "keywords": [],
+  "author": "Hugo Villeneuve",
+  "license": "unlicensed",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "TODO"
+  },
+  "main": "./index.js",
+  "files": [
+    "./index.js"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "short-tape": "4.2.0"
+  },
+  "engines": {
+    "node": ">= 0.10.0",
+    "npm": "2.x"
+  },
+  "scripts": {
+    "test": "node test.js"
+  }
+}
