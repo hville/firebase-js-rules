@@ -1,11 +1,9 @@
 {
-  "name": "firebase-rules",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TODO",
   "keywords": [],
   "author": "Hugo Villeneuve",
-  "license": "unlicensed",
-  "private": true,
+  "license": "UNLICENSED",
   "repository": {
     "type": "git",
     "url": "TODO"
@@ -14,15 +12,18 @@
   "files": [
     "./index.js"
   ],
-  "dependencies": {},
-  "devDependencies": {
-    "short-tape": "4.2.0"
+  "dependencies": {
+    "tt": "1.0.3",
+    "untap": "0.0.4"
   },
-  "engines": {
-    "node": ">= 0.10.0",
-    "npm": "2.x"
+  "devDependencies": {
+    "cotest": "^1.6.1"
   },
   "scripts": {
-    "test": "node test.js"
-  }
+    "test": "node test.js | untap"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873/"
+  },
+  "name": "@private/firebase-rules"
 }
