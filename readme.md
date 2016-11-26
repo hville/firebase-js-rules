@@ -44,9 +44,6 @@ JS.save('./firebase-rules.json')
 * friendly with other javascript tools (linters, highlighers, autosuggest)
 * variables to individually define and re-use rule-sets or rule-templates
 * commonJS module to individually prepare and test sets of rules and group them last
-* more flexible than other implementations for different DAG structures
-* DAG is not modified
-* past sorting orders can be used
 
 To other tools already exist:
 
