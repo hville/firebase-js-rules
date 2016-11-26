@@ -59,14 +59,11 @@ To other tools already exist:
 * `.child([template])` => assigns template object or `ruleObject` to the current `ruleObject`
 * `.save([fileName])` nest in `{rules: ruleObject}` and saves to a JSON file
 
-`R.globals()` optional utility to make firebase variables globals
-* `auth`, `data`, `root`, `newData` instead of `R.auth`, `R.data`, `R.root`, `R.newData`
-* for custom variables `$('myvar')` instead of `R.$('myvar')`
-
 `ruleLogic`
 * a string or strings to be concatenated: `R().write('$uid', '===', 'auth.uid')`
 * `firebase` variable methods: `R().write(newData.child('user_id').val())`
-* a function: `R().write(()=>{return !data.exists() && newData.child('user_id').val() == auth.uid}`
+* a function: `R().write(function() {return !this.data.exists() && this.newData.child('user_id').val() == this.auth.uid}`
+  * the function style is to cover cases with many operators (eg. `!`, `&&`, `==`). No arrow function since the function is binded to the variables for validation
 
 ## Not yet implemented
 

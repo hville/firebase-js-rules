@@ -15,45 +15,47 @@ var variables = {
 
 module.exports = variables
 
+
 function Rule(prefix) {
-	this.rule = prefix || ''
+	this.$rule = prefix || ''
 }
 Rule.prototype = {
 	constructor: Rule,
-	val: stringFunction('val'),
+	val: stringMethod('val'),
 	child: child,
 	parent: parent,
-	hasChild: stringFunction('hasChild'),
-	hasChildren: stringFunction('hasChildren'),
-	exists: stringFunction('exists'),
-	isBoolean: stringFunction('isBoolean'),
-	isAuth: stringFunction('isAuth'),
-	isEqual: stringFunction('isEqual'),
-	isNumber: stringFunction('isNumber'),
-	isString: stringFunction('isString'),
-	getPriority: stringFunction('getPriority')
+	hasChild: stringMethod('hasChild'),
+	hasChildren: stringMethod('hasChildren'),
+	exists: stringMethod('exists'),
+	isBoolean: stringMethod('isBoolean'),
+	isAuth: stringMethod('isAuth'),
+	isEqual: stringMethod('isEqual'),
+	isNumber: stringMethod('isNumber'),
+	isString: stringMethod('isString'),
+	getPriority: stringMethod('getPriority')
 	//TODO str.contains(), .beginsWith(), endsWith(), .replace(), ...
 }
-function child() {
-	for (var i=0; i<arguments.length; ++i) {
-		if (arguments[i] !== undefined) {
-			this.rule += '.child(' + pathString(arguments[i]) + ')'
-		}
-	}
-	return new Rule(this.rule)
-}
-function parent(str) {
-	if (str !== undefined) this.path += '.parent(' + pathString(str) + ')'
-	return new Rule(this.rule)
-}
-function stringFunction(functionName) {
+function stringMethod(functionName) {
 	return function(arg) {
 		var str = arg === undefined ? ''
 			: typeof arg === 'string' ? pathString(arg)
 			: JSON.stringify(arg).replace(/"/g,'\'')
-		return (this.rule += '.' + functionName + '(' + str + ')')
+		return (this.$rule + '.' + functionName + '(' + str + ')')
 	}
 }
+function child() {
+	for (var i=0; i<arguments.length; ++i) {
+		if (arguments[i] !== undefined) {
+			this.$rule += '.child(' + pathString(arguments[i]) + ')'
+		}
+	}
+	return new Rule(this.$rule)
+}
+function parent(str) {
+	if (str !== undefined) this.path += '.parent(' + pathString(str) + ')'
+	return new Rule(this.$rule)
+}
+
 /**
  * parse string including path items
  * leave code as-is and wrap strings in single quotes
@@ -62,7 +64,7 @@ function stringFunction(functionName) {
  */
 function pathString(str) {
 	if (str === undefined) return ''
-	if (typeof str !== 'string') return str.toString()
+	if (typeof str !== 'string') return str //.toString()
 	var arr = str.split('/')
 	return arr.map(string).join('/')
 }

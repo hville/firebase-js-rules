@@ -1,6 +1,6 @@
 {
   "name": "firebase-js-rules",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "firebase rules, javascript style",
   "keywords": [
     "firebase", "security", "rules", "json"
@@ -12,7 +12,7 @@
     "cotest": "^1.6.1"
   },
   "scripts": {
-    "test": "node tst"
+    "test": "cotest tst"
   },
   "repository": {
     "type": "git",

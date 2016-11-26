@@ -1,3 +1,4 @@
+var variables = require('./variables')
 /*
 utility to create ruleset. eg.
 var myrule = rule()
@@ -7,7 +8,6 @@ var myrule = rule()
 			//more rules
 		})
 */
-
 module.exports = rule
 
 function rule(obj) {
@@ -22,7 +22,7 @@ Rule.prototype = {
 	write: makeType('write'),
 	validate: makeType('validate'),
 	indexOn: makeType('indexOn'),
-	nest: Object.assign.bind(this)
+	nest: function(obj) { return Object.assign(this, obj)}
 }
 
 // either concat inputs, or stringify function or leave single arg as-is
@@ -37,5 +37,6 @@ function makeType(type) {
 	}
 }
 function toString(fcn) {
-	return fcn.toString().replace(/(^.*?\{(\s*return\s*)*|\}$)/g, '').replace(/\s+/, ' ').trim()
+	fcn.call(variables) //should do nothing. Just a test to validate internal expression
+	return fcn.toString().replace(/(^.*?\{(\s*return\s*)*|this\.|\}$)/g, '').replace(/\s+/g, ' ').trim()
 }

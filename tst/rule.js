@@ -1,8 +1,5 @@
-/*global auth, data, newData*/
 var t = require('cotest'),
 		R = require('../src/rule')
-
-R.globals()
 
 t('type, primitive true/false/array', ()=>{
 	var tgt = JSON.parse(`{
@@ -22,7 +19,7 @@ t('type, primitive true/false/array', ()=>{
 	t('===', foo['.read'], tgt.rules.foo['.read'])
 	t('{==}', foo['.indexOn'], tgt.rules.foo['.indexOn'])
 	t('{==}', foo, tgt.rules.foo)
-}, true)
+})
 
 t('type, concat rules', ()=>{
 	var tgt = JSON.parse(`{
@@ -59,7 +56,7 @@ t('type, function', ()=>{
 		}
 	}`)
 	var $uid = R().write(function check() {
-		return !data.exists() && newData.child('user_id').val() == auth.uid
+		return !this.data.exists() && this.newData.child('user_id').val() == this.auth.uid
 	})
 	t('===', $uid['.write'], tgt.rules['.write'])
 	t('{==}', $uid, tgt.rules)
