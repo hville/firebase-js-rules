@@ -68,7 +68,7 @@ To other tools already exist:
 * `firebase` variable methods: `R().write(newData.child('user_id').val())`
 * a function: `R().write(()=>{return !data.exists() && newData.child('user_id').val() == auth.uid}`
 
-## Not yet implementes
+## Not yet implemented
 
 * string variable methods (`.contains()`, `.beginsWith()`, `endsWith()`, `.replace()`, ...)
 * sugar for common operators (`=== null`, ...)
