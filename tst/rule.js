@@ -1,21 +1,26 @@
 var t = require('cotest'),
-		T = require('../src/types')
+		R = require('../src/rule')
 
-t('type, primitive true/false', ()=>{
+t('type, primitive true/false/array', ()=>{
 	var tgt = JSON.parse(`{
 		"rules": {
 			"foo": {
 				".read": true,
-				".write": false
+				".write": false,
+				".indexOn": ["height", "length"]
 			}
 		}
 	}`)
-	var foo = {}
-	T.read(foo, true)
-	T.write(foo, false)
+	var foo = R()
+			.read(true)
+			.write(false)
+			.indexOn(['height', 'length'])
 	t('===', foo['.write'], tgt.rules.foo['.write'])
+	t('===', foo['.read'], tgt.rules.foo['.read'])
+	t('{==}', foo['.indexOn'], tgt.rules.foo['.indexOn'])
 	t('{==}', foo, tgt.rules.foo)
-})
+}, true)
+
 t('type, concat rules', ()=>{
 	var tgt = JSON.parse(`{
 		"rules": {
@@ -26,33 +31,33 @@ t('type, concat rules', ()=>{
 			}
 		}
 	}`)
-	var $uid = {}
-	T.write($uid, '$uid', '===', 'auth.uid')
+	var $uid = R()
+			.write('$uid', '===', 'auth.uid')
 	t('===', $uid['.write'], tgt.rules.users.$uid['.write'])
 	t('{==}', $uid, tgt.rules.users.$uid)
 })
+
 t('type, concat longer rules rules', ()=>{
 	var tgt = JSON.parse(`{
 		"rules": {
 			".write": "!data.exists() && newData.child('user_id').val() == auth.uid"
 		}
 	}`)
-	var $uid = {}
-	T.write($uid, '!data.exists()', '&&', 'newData.child(\'user_id\').val()', '==', 'auth.uid')
+	var $uid = R()
+			.write('!data.exists()', '&&', 'newData.child(\'user_id\').val()', '==', 'auth.uid')
 	t('===', $uid['.write'], tgt.rules['.write'])
 	t('{==}', $uid, tgt.rules)
 })
+
 t('type, function', ()=>{
 	var tgt = JSON.parse(`{
 		"rules": {
 			".write": "!data.exists() && newData.child('user_id').val() == auth.uid"
 		}
 	}`)
-	var $uid = {}
-	function check() {
+	var $uid = R().write(function check() {
 		return !data.exists() && newData.child('user_id').val() == auth.uid
-	}
-	T.write($uid, check)
+	})
 	t('===', $uid['.write'], tgt.rules['.write'])
 	t('{==}', $uid, tgt.rules)
 })

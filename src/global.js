@@ -1,5 +1,10 @@
 var variables = require('./variables')
 
+/*
+optionally sets global firebase rule variables (auth, root, newData...)
+the alternative is to use them as R.auth, R.root...
+*/
+
 module.exports = setGlobal
 
 function setGlobal() {

@@ -1,29 +1,26 @@
 {
-  "version": "0.0.2",
-  "description": "TODO",
-  "keywords": [],
-  "author": "Hugo Villeneuve",
-  "license": "UNLICENSED",
-  "repository": {
-    "type": "git",
-    "url": "TODO"
-  },
-  "main": "./index.js",
-  "files": [
-    "./index.js"
+  "name": "firebase-js-rules",
+  "version": "0.1.0",
+  "description": "firebase rules, javascript style",
+  "keywords": [
+    "firebase", "security", "rules", "json"
   ],
-  "dependencies": {
-    "tt": "1.0.3",
-    "untap": "0.0.4"
-  },
+  "author": "Hugo Villeneuve",
+  "main": "./index.js",
+  "dependencies": {},
   "devDependencies": {
     "cotest": "^1.6.1"
   },
   "scripts": {
-    "test": "node test.js | untap"
+    "test": "node tst"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hville/firebase-js-rules.git"
+  },
+  "private": false,
+  "license": "MIT",
   "publishConfig": {
-    "registry": "http://localhost:4873/"
-  },
-  "name": "@private/firebase-rules"
+    "registry": "https://registry.npmjs.org/"
+  }
 }

@@ -7,6 +7,7 @@ auth.token = 'auth.token'
 var variables = {
 	auth: auth,
 	now: 'now',
+	$: function(str) { return '$' + str },
 	get root() { return new Rule('root') },
 	get data() { return new Rule('data') },
 	get newData() { return new Rule('newData') }
@@ -46,8 +47,11 @@ function parent(str) {
 	return new Rule(this.rule)
 }
 function stringFunction(functionName) {
-	return function(str) {
-		return (this.rule += '.' + functionName + '(' + (str ? pathString(str) : '') + ')')
+	return function(arg) {
+		var str = arg === undefined ? ''
+			: typeof arg === 'string' ? pathString(arg)
+			: JSON.stringify(arg).replace(/"/g,'\'')
+		return (this.rule += '.' + functionName + '(' + str + ')')
 	}
 }
 /**
@@ -58,6 +62,7 @@ function stringFunction(functionName) {
  */
 function pathString(str) {
 	if (str === undefined) return ''
+	if (typeof str !== 'string') return str.toString()
 	var arr = str.split('/')
 	return arr.map(string).join('/')
 }
@@ -68,10 +73,11 @@ function pathString(str) {
  * @returns {string} - path string with internal quotations
  */
 function string(str) {
-	var QUOTE = '\''
+	var QUOTE = '\'',
+			QUOTED = /^['"].*['"]/
 	if (str === undefined) return ''
 	if (variables[str]) return str
-	if (str[0] === '$' || str[0] === QUOTE) return str
+	if (str[0] === '$' || QUOTED.test(str)) return str
 	var first = str.split('.')[0]
 	if (variables[first]) return str
 	return QUOTE + str + QUOTE

@@ -1,4 +1,5 @@
+.git/
+node_modules/
 bld/
 notes/
 old/
-node_modules/

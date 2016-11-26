@@ -1,27 +1,8 @@
 /*global auth, data, newData*/
-
-/*
-TODO: instead of {
-	global
-	group
-	save
-}
-try:
-rule.global()
-rule() => rule
-rule()
-.write('kdkdkd')
-.children({
-	a: rule(),
-	b: rule()
-})
-.save(filename)
-
-*/
-
-
 var t = require('cotest'),
-		R = require('../src/index') //	global,group,save
+		R = require('../index') //	global,group,save
+
+R.globals() //sets root, auth, data, newData and $ as globals
 
 //from: https://firebase.google.com/docs/reference/security/database/#variables
 t('indexOn - Array', ()=>{
@@ -30,9 +11,10 @@ t('indexOn - Array', ()=>{
 			".indexOn": ["height", "length"]
 		}
 	}`)
-	var dino = R.group()
-	dino.indexOn(['height', 'length'])
-	t('{==}', dino, ref.dinosaures)
+	var dino = R()
+			.indexOn(['height', 'length'])
+	t('{==}', dino['.indexOn'], ref.dinosaurs['.indexOn'])
+	t('{==}', dino, ref.dinosaurs)
 })
 
 t('write - Function', ()=>{
@@ -42,9 +24,9 @@ t('write - Function', ()=>{
 			".write": "!data.exists() && newData.child('user_id').val() == auth.uid"
 		}
 	}`)
-	var rules = R.group({
-		$comment: R.group().write(function(){
-			!data.exists() && newData.child('user_id').val() == auth.uid
+	var rules = R({
+		$comment: R().write(function(){
+			return !data.exists() && newData.child('user_id').val() == auth.uid
 		})
 	}).read(true)
 	t('{==}', rules, ref)
@@ -57,8 +39,9 @@ t('chain methods', ()=>{
 		}
 	}`)
 	var rules = {
-		$comment: R.group().read(root.child('users').child(auth.uid).child('active').val(), '== true')
+		comments: R().read(root.child('users').child(auth.uid).child('active').val(), '== true')
 	}
+	t('{==}', rules.comments['.read'], ref.comments['.read'])
 	t('{==}', rules, ref)
 })
 
@@ -68,45 +51,51 @@ t('chain rule types', ()=>{
 			"$user": {
 				".read": true,
 				".write": true,
-				".validate": "newData.hasChildren(['name', 'age'])"
+				".validate": "newData.hasChildren(['name','age'])"
 			}
 		}
 	}`)
 	var rules = {
 		users: {
-			$user: R.group()
+			$user: R()
 				.read(true)
 				.write(true)
 				.validate(newData.hasChildren(['name', 'age']))
 		}
 	}
+	t('{==}', rules.users.$user['.read'], ref.users.$user['.read'])
+	t('{==}', rules.users.$user['.write'], ref.users.$user['.write'])
+	t('{==}', rules.users.$user['.validate'], ref.users.$user['.validate'])
 	t('{==}', rules, ref)
 })
 
 //arbitrary rules to test
 t('blast from the past', ()=>{
-	var $dbID = R.group()
+	var $dbID = R()
 	.validate(newData.exists() || newData.hasChildren(['sys']))
 	.read(data.hasChild('sys/boss/'+auth.id))
 	.write(data.hasChild('sys/boss/'+auth.id))
 
-	var dbOpen = R.group($dbID)
+	var dbOpen = R($dbID)
 		.write(root.child($dbID+'/sys/boss/'+auth.id).exists())
-	var dbAuth = R.group($dbID)
+
+	var dbAuth = R($dbID)
 		.read(auth, '!==', null)
 
-	var rules = R.group({
+	var idList = R()
+
+	var rules = R({
 		$dbID: $dbID,
 		open: dbOpen,
 		auth: dbAuth,
-		sys: R.group({
-			type: R.group().validate(newData.isString()),
+		sys: R({
+			type: R().validate(newData.isString()),
 			boss: idList,
 			edit: idList,
 			read: idList,
-			$other: R.group().validate(false)
+			$other: R().validate(false)
 		}).validate(newData.hasChildren(['type', 'boss', 'edit', 'read'])),
-		type: R.group().validate(newData.isString())
+		type: R().validate(newData.isString())
 	}).write(()=>{
 		auth !== null && !data.exists() && newData.exists()
 	})
