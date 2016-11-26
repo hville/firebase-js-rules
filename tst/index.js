@@ -97,6 +97,7 @@ t('blast from the past', ()=>{
 		}).validate(newData.hasChildren(['type', 'boss', 'edit', 'read'])),
 		type: R().validate(newData.isString())
 	}).write(()=>{
-		auth !== null && !data.exists() && newData.exists()
+		return auth !== null && !data.exists() && newData.exists()
 	})
+	t('===', typeof rules, 'object') //TODO expand
 })

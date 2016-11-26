@@ -1,5 +1,8 @@
+/*global auth, data, newData*/
 var t = require('cotest'),
 		R = require('../src/rule')
+
+R.globals()
 
 t('type, primitive true/false/array', ()=>{
 	var tgt = JSON.parse(`{

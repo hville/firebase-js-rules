@@ -53,7 +53,6 @@ To other tools already exist:
 * [firebase-bolt](https://github.com/firebase/bolt) a YAML format that requires learning another API and format
 * [firebase-blaze](https://github.com/firebase/bolt) another YAML format - DEPRECATED
 
-
 ## API
 
 `R([template])` => `ruleObject` with the following methods
