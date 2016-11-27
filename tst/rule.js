@@ -1,27 +1,29 @@
 var t = require('cotest'),
 		R = require('../src/rule')
 
-t('type, primitive true/false/array', ()=>{
+function compareKeys(s, r) {
+	var keys = new Set(Object.keys(s).concat(Object.keys(r)))
+	for (var k of keys) {
+		t('===', typeof s[k], typeof r[k], 'key: '+k)
+		t('{==}', s[k], r[k], 'key: '+k)
+	}
+}
+
+t('rule: primitive true/false/array', ()=>{
 	var tgt = JSON.parse(`{
-		"rules": {
-			"foo": {
-				".read": true,
-				".write": false,
-				".indexOn": ["height", "length"]
-			}
-		}
+		".read": true,
+		".write": false,
+		".indexOn": ["height", "length"]
 	}`)
 	var foo = R()
 			.read(true)
 			.write(false)
 			.indexOn(['height', 'length'])
-	t('===', foo['.write'], tgt.rules.foo['.write'])
-	t('===', foo['.read'], tgt.rules.foo['.read'])
-	t('{==}', foo['.indexOn'], tgt.rules.foo['.indexOn'])
-	t('{==}', foo, tgt.rules.foo)
+
+	compareKeys(foo, tgt)
 })
 
-t('type, concat rules', ()=>{
+t('rule: string', ()=>{
 	var tgt = JSON.parse(`{
 		"rules": {
 			"users": {
@@ -32,32 +34,19 @@ t('type, concat rules', ()=>{
 		}
 	}`)
 	var $uid = R()
-			.write('$uid', '===', 'auth.uid')
-	t('===', $uid['.write'], tgt.rules.users.$uid['.write'])
-	t('{==}', $uid, tgt.rules.users.$uid)
+			.write('$uid === auth.uid')
+	compareKeys($uid, tgt.rules.users.$uid)
 })
 
-t('type, concat longer rules rules', ()=>{
+t('rule: function', ()=>{
 	var tgt = JSON.parse(`{
 		"rules": {
 			".write": "!data.exists() && newData.child('user_id').val() == auth.uid"
 		}
 	}`)
 	var $uid = R()
-			.write('!data.exists()', '&&', 'newData.child(\'user_id\').val()', '==', 'auth.uid')
+.write((data, auth, newData) => !data.exists() && newData.child('user_id').val() == auth.uid)
 	t('===', $uid['.write'], tgt.rules['.write'])
 	t('{==}', $uid, tgt.rules)
-})
-
-t('type, function', ()=>{
-	var tgt = JSON.parse(`{
-		"rules": {
-			".write": "!data.exists() && newData.child('user_id').val() == auth.uid"
-		}
-	}`)
-	var $uid = R().write(function check() {
-		return !this.data.exists() && this.newData.child('user_id').val() == this.auth.uid
-	})
-	t('===', $uid['.write'], tgt.rules['.write'])
-	t('{==}', $uid, tgt.rules)
+	compareKeys($uid, tgt.rules)
 })

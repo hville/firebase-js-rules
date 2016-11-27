@@ -1,6 +1,6 @@
 {
   "name": "firebase-js-rules",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "firebase rules, javascript style",
   "keywords": [
     "firebase", "security", "rules", "json"

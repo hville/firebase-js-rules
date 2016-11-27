@@ -30,8 +30,8 @@ var rulesJS = {
   users: {
     $user: R()
       .read(true)
-      .write(true)
-      .validate(newData.hasChildren(['name', 'age']))
+      .write((auth, $user) => $user === auth.uid)
+      .validate(newData => newData.hasChildren(['name', 'age']))
   }
 }
 
@@ -41,13 +41,13 @@ JS.save('./firebase-rules.json')
 
 ## Features
 
-* friendly with other javascript tools (linters, highlighers, autosuggest)
-* variables to individually define and re-use rule-sets or rule-templates
+* friendly with other javascript tools: *linters*, *highlighers*, *autosuggest*, ...
+* variables to individually define, re-use or augment rule-sets or rule-templates
 * commonJS module to individually prepare and test sets of rules and group them last
 
-To other tools already exist:
+Two other tools already exist:
 
-* [firebase-bolt](https://github.com/firebase/bolt) a YAML format that requires learning another API and format
+* [firebase-bolt](https://github.com/firebase/bolt) a YAML format that requires learning another syntax
 * [firebase-blaze](https://github.com/firebase/bolt) another YAML format - DEPRECATED
 
 ## API
@@ -56,19 +56,13 @@ To other tools already exist:
 * `.read(logic)` => `ruleObject` with added property
 * `.write(logic)` => `ruleObject` with added property
 * `.indexOn(logic)` => `ruleObject` with added property
-* `.child([template])` => assigns template object or `ruleObject` to the current `ruleObject`
 * `.save([fileName])` nest in `{rules: ruleObject}` and saves to a JSON file
 
-`ruleLogic`
-* a string or strings to be concatenated: `R().write('$uid', '===', 'auth.uid')`
-* `firebase` variable methods: `R().write(newData.child('user_id').val())`
-* a function: `R().write(function() {return !this.data.exists() && this.newData.child('user_id').val() == this.auth.uid}`
-  * the function style is to cover cases with many operators (eg. `!`, `&&`, `==`). No arrow function since the function is binded to the variables for validation
-
-## Not yet implemented
-
-* string variable methods (`.contains()`, `.beginsWith()`, `endsWith()`, `.replace()`, ...)
-* sugar for common operators (`=== null`, ...)
+rule `logic` is either
+* a JSON primitive to be used as-is: `string`, `boolean`
+* an arrow-function expression: `(auth, data, newData) => !data.exists() && newData.child('user_id').val() == auth.uid`
+  * Only arrow functions and no curly braces to only allow expressions
+  * Function is run before extrating the body string to make sure that the variables methods are allowed
 
 # License
 
