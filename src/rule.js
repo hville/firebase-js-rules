@@ -45,12 +45,15 @@ function makeType(type) {
 }
 // to ensure expression only, only allow arrow function () => result
 // test by passing argument, return the function body
+var RE_COMMENTS = /\/\/.*\n|\/\*.*\*\//g,
+		RE_ARROW = /=>/,
+		RE_MULTISPACES = /\s+/g
 function toString(fcn) {
-	var parts = fcn.toString().split('=>')
+	var parts = fcn.toString().replace(RE_COMMENTS,'').split(RE_ARROW)
 	if (parts.length !== 2) throw Error('Rule logic function must be in Arrow format (i.e "...=>..." )')
 
 	var args = parts[0].replace(/[\(\)\s]+/g, '').split(','),
-			body = parts[1].replace(/\s+/g, ' ').trim()
+			body = parts[1].replace(RE_MULTISPACES, ' ').trim()
 	if (body[0] === '{') throw Error('Rule logic function body must be an expression without curly braces')
 
 	args.forEach((a)=>{

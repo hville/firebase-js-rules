@@ -45,7 +45,10 @@ t('rule: function', ()=>{
 		}
 	}`)
 	var $uid = R()
-.write((data, auth, newData) => !data.exists() && newData.child('user_id').val() == auth.uid)
+	.write((data, auth, newData) =>
+		!data.exists()
+		&& newData.child('user_id').val() == auth.uid /* eslint eqeqeq:0 */
+	)
 	t('===', $uid['.write'], tgt.rules['.write'])
 	t('{==}', $uid, tgt.rules)
 	compareKeys($uid, tgt.rules)

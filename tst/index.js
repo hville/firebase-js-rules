@@ -23,7 +23,9 @@ t('write - Function', ()=>{
 	}`)
 	var rules = R({
 		$comment: R().write(
-			(data, newData, auth) => !data.exists() && newData.child('user_id').val() == auth.uid
+			(data, newData, auth) =>
+				!data.exists() //some multiline and comment curveballs
+				&& newData.child('user_id').val() == auth.uid /* eslint eqeqeq:0 */
 		)
 	})
 	.read(true)
