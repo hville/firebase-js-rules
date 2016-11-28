@@ -5,8 +5,8 @@ var defaultName = 'firebase-rules.json',
 
 module.exports = save
 
-function save(rules, fileName) {
-	var json = JSON.stringify({rules: rules}, null, 2),
+function save(fileName) {
+	var json = JSON.stringify({rules: this}, null, 2),
 			name = !fileName ? defaultName
 				: fileName.slice(-extension.length) === extension ? fileName
 				: fileName + extension
