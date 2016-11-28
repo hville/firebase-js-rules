@@ -1,8 +1,61 @@
 var t = require('cotest'),
 		R = require('../index') //	global,group,save
 
+function compareKeys(s, r) {
+	var keys = new Set(Object.keys(s).concat(Object.keys(r)))
+	for (var k of keys) {
+		t('===', typeof s[k], typeof r[k], 'key: '+k)
+		t('{==}', s[k], r[k], 'key: '+k)
+	}
+}
+
+t('rule - primitive true/false/array', ()=>{
+	var tgt = JSON.parse(`{
+		".read": true,
+		".write": false,
+		".indexOn": ["height", "length"]
+	}`)
+	var foo = R()
+			.read(true)
+			.write(false)
+			.indexOn(['height', 'length'])
+
+	compareKeys(foo, tgt)
+})
+
+t('rule - string', ()=>{
+	var tgt = JSON.parse(`{
+		"rules": {
+			"users": {
+				"$uid": {
+					".write": "$uid === auth.uid"
+				}
+			}
+		}
+	}`)
+	var $uid = R()
+			.write('$uid === auth.uid')
+	compareKeys($uid, tgt.rules.users.$uid)
+})
+
+t('rule - function', ()=>{
+	var tgt = JSON.parse(`{
+		"rules": {
+			".write": "!data.exists() && newData.child('user_id').val() == auth.uid"
+		}
+	}`)
+	var $uid = R()
+	.write((data, auth, newData) =>
+		!data.exists()
+		&& newData.child('user_id').val() == auth.uid /* eslint eqeqeq:0 */
+	)
+	t('===', $uid['.write'], tgt.rules['.write'])
+	t('{==}', $uid, tgt.rules)
+	compareKeys($uid, tgt.rules)
+})
+
 //from: https://firebase.google.com/docs/reference/security/database/#variables
-t('indexOn - Array', ()=>{
+t('rule - indexOn - Array', ()=>{
 	var ref = JSON.parse(`{
 		"dinosaurs": {
 			".indexOn": ["height", "length"]
@@ -14,7 +67,7 @@ t('indexOn - Array', ()=>{
 	t('{==}', dino, ref.dinosaurs)
 })
 
-t('write - Function', ()=>{
+t('rule - write - Function', ()=>{
 	var ref = JSON.parse(`{
 		".read": true,
 		"$comment": {
@@ -36,7 +89,7 @@ t('write - Function', ()=>{
 	t('{==}', rules, ref)
 })
 
-t('chain methods', ()=>{
+t('rule - chain methods', ()=>{
 	var ref = JSON.parse(`{
 		"comments": {
 			".read": "root.child('users').child(auth.uid).child('active').val() == true"
@@ -50,7 +103,7 @@ t('chain methods', ()=>{
 	t('{==}', rules, ref)
 })
 
-t('chain rule types', function() {
+t('rule - chain rule types', function() {
 	var ref = JSON.parse(`{
 		"users": {
 			"$user": {

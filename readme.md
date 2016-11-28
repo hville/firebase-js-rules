@@ -26,17 +26,16 @@ var rulesJSON = JSON.parse(`{
 }`)
 
 //produces the same result (rJSON deep equal rJS)
-var rulesJS = {
-  users: {
+var rulesJS = R({
+  users: R({
     $user: R()
       .read(true)
       .write((auth, $user) => $user === auth.uid)
       .validate(newData => newData.hasChildren(['name', 'age']))
-  }
-}
-
+  })
+})
 //write to file
-JS.save('./firebase-rules.json')
+.save('./firebase-rules.json')
 ```
 
 ## Features
@@ -59,7 +58,7 @@ Two other tools already exist:
 * `.save([fileName])` nest in `{rules: ruleObject}` and saves to a JSON file
 
 rule `logic` is either
-* a JSON primitive to be used as-is: `string`, `boolean`
+* a JSON primitive to be used as-is: `string`, `boolean`, `null`
 * an arrow-function expression: `(auth, data, newData) => !data.exists() && newData.child('user_id').val() == auth.uid`
   * Only arrow functions and no curly braces to only allow expressions
   * Function is run before extrating the body string to make sure that the variables methods are allowed
