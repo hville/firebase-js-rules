@@ -3,8 +3,8 @@ var t = require('cotest'),
 
 function throws(f, a, m) {
 	try {
-		f.apply(null, a)
-		t('!', true, m) //fails
+		f(a)
+		t('==', true, false, m) //fails
 	}
 	catch(e) {
 		t('!!', e) //pass
@@ -25,6 +25,15 @@ t('body - reject external closure variables', ()=>{
 	throws(B, ()=>closure, 'all variables must be declared')
 	throws(B, auth => auth + closure, 'all variables must be declared')
 })
+t('body - reject internal functions', ()=>{
+	throws(B, $v=>()=>$v, 'no internal functions')
+	throws(B, auth => function(){return auth}, 'all variables must be declared')
+})
+t('body - reject global variables and reserved words', ()=>{
+	throws(B, $v => Object.assign($v), 'no internal functions')
+	throws(B, auth => delete auth.id, 'all variables must be declared')
+})
+
 t('body - handles inline and multiline comments', ()=>{
 	var fcn = ( /* inline comment1 */ auth,
 		// inline comments2
